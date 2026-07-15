@@ -237,8 +237,8 @@ function showTab(t){
   if(t==='links')renderL();
   if(t==='agenda')renderCal();
 }
-function loadT(){return lsG('dfsT')||[]}
-function saveT2(d){lsS('dfsT',d);badges()}
+function loadT(){return _cache['trats']||[]}
+function saveT2(d){dbSet('trats',d,function(){badges();renderT()})}
 function renderT(){
   var n=document.getElementById('fNode').value,r=document.getElementById('fResp').value,
       s=document.getElementById('fStat').value,q=document.getElementById('fSearch').value.toLowerCase();
@@ -288,7 +288,7 @@ function exportT(){
   var a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
   a.download='tratativas_'+td()+'.csv';a.click();
 }
-function loadL(){return lsG('dfsL')||{cats:['Operacional','Metricas','Sistemas'],links:[
+function loadL(){return _cache['links']||{cats:['Operacional','Metricas','Sistemas'],links:[
   {id:'l1',name:'FM Metrics',url:'https://metrics.amazon.com',ico:'&#128202;',desc:'Metricas First Mile',cat:'Metricas'},
   {id:'l2',name:'PRISM',url:'https://trans-logistics.amazon.com/ssp/prism/flow/home_success',ico:'&#128666;',desc:'Planejamento transporte',cat:'Sistemas'},
   {id:'l3',name:'Cortex ESE8',url:'https://logistics.amazon.com.br/internal/operations/execution/itineraries?serviceAreaId=7fca7319-0762-40b2-9f5b-ebc8615a4522',ico:'&#128506;',desc:'Itinerarios ESE8',cat:'Sistemas'},
@@ -296,7 +296,7 @@ function loadL(){return lsG('dfsL')||{cats:['Operacional','Metricas','Sistemas']
   {id:'l5',name:'WBR DF-SUL',url:'https://adrianovie-rgb.github.io/WBR---DF-SUL/',ico:'&#128200;',desc:'Dashboard WBR semanal',cat:'Metricas'},
   {id:'l6',name:'Wash Report',url:'https://adrianovie-rgb.github.io/fm-edsps/index.html',ico:'&#128221;',desc:'Relatorio diario EDSPs',cat:'Operacional'}
 ]}}
-function saveL2(d){lsS('dfsL',d)}
+function saveL2(d){dbSet('links',d,function(){renderL()})}
 function renderL(){
   var data=loadL(),w=document.getElementById('linksWrap'),bC={};
   data.cats.forEach(function(c){bC[c]=[]});
@@ -329,8 +329,8 @@ function saveL(){
   if(id)d.links=d.links.map(function(l){return l.id===id?e:l});else d.links.push(e);
   saveL2(d);closeLM();renderL();
 }
-function loadEv(){return lsG('dfsEv')||[]}
-function saveEv2(d){lsS('dfsEv',d);badges()}
+function loadEv(){return _cache['events']||[]}
+function saveEv2(d){dbSet('events',d,function(){badges();renderCal()})}
 function navC(dir){calM+=dir;if(calM>11){calM=0;calY++}if(calM<0){calM=11;calY--}renderCal()}
 function getEvDay(iso){return loadEv().filter(function(e){
   if(e.days&&e.days.length)return e.days.indexOf(iso)>-1;
@@ -452,9 +452,37 @@ function badges(){
   bA.textContent=e;bA.style.display=e?'':'none';
 }
 (function(){
+  // Preencher select de nodes
   var nodes=['ECB8','EGO8','EIJ8','EJO8','ELO8','EME8','EMR8','EOZ8','ERS8','ESB8','ESE8','EUM8','EVE8','EXS9'];
   var s=document.getElementById('fNode');
   nodes.forEach(function(n){var o=document.createElement('option');o.value=n;o.textContent=n;s.appendChild(o)});
-  renderT();renderL();badges();
   calY=new Date().getFullYear();calM=new Date().getMonth();
+
+  // Indicador de conexão
+  var ind=document.createElement('div');
+  ind.id='dbInd';
+  ind.style.cssText='position:fixed;bottom:12px;right:12px;background:#1a1d20;color:#9aa0a6;font-size:10px;font-weight:700;padding:5px 10px;border-radius:6px;border:1px solid #2d3035;z-index:9999';
+  ind.textContent='⏳ Conectando...';
+  document.body.appendChild(ind);
+
+  function setInd(ok){
+    var el=document.getElementById('dbInd');
+    if(!el)return;
+    el.textContent=ok?'🟢 Firebase':'🔴 Offline';
+    el.style.color=ok?'#6ee7b7':'#fca5a5';
+    if(ok)setTimeout(function(){el.style.opacity='0.4'},3000);
+    else el.style.opacity='1';
+  }
+
+  // Carregar dados iniciais e iniciar listeners em tempo real
+  dbGet('trats',function(d){_cache['trats']=d||[];renderT();badges()});
+  dbGet('links',function(d){_cache['links']=d||null;renderL()});
+  dbGet('events',function(d){_cache['events']=d||[];badges()});
+
+  // Listeners SSE — atualização em tempo real
+  dbListen('trats',function(d){_cache['trats']=d||[];renderT();badges();setInd(true)});
+  dbListen('links',function(d){_cache['links']=d||null;renderL();setInd(true)});
+  dbListen('events',function(d){_cache['events']=d||[];badges();renderCal();setInd(true)});
+
+  setTimeout(function(){setInd(true)},2000);
 })();</script></body></html>
