@@ -181,7 +181,9 @@ tr:hover td{background:#fafbfc}
     <div class="fi"><label>Pessoa</label><select id="epe"><option value="">Geral/Todos</option><option>Kimberly</option><option>Adriano</option><option>Marina</option><option>Vinicius</option><option>João</option></select></div>
     <div class="fi"><label>Data Início</label><input type="date" id="est"></div>
     <div class="fi"><label>Data Fim</label><input type="date" id="een"></div>
-    <div class="fi fl"><label>Observação</label><input type="text" id="eob" placeholder="Opcional"></div>
+    <div class="fi fl"><label>🔗 Link Zoom / Reunião</label><input type="text" id="ezm" placeholder="https://zoom.us/j/..."></div>
+    <div class="fi"><label>Observação</label><input type="text" id="eob" placeholder="Opcional"></div>
+    <div class="fi"><label>🔁 Recorrência</label><select id="erc"><option value="none">Sem recorrência</option><option value="weekly">Semanal</option><option value="biweekly">Quinzenal</option><option value="monthly">Mensal</option><option value="annually">Anual</option></select></div>
     <div class="fi" id="edw" style="display:none"><label>&nbsp;</label><button class="bcl" id="edel" style="border-color:#991b1b;color:#991b1b">Excluir</button></div>
   </div>
   <div class="mf"><button class="bcl" id="excn">Cancelar</button><button class="bsv" id="esv">Salvar</button></div>
@@ -325,18 +327,12 @@ function rL(){
   data.links.forEach(function(l){if(!bc[l.cat])bc[l.cat]=[];bc[l.cat].push(l);});
   w.innerHTML=data.cats.map(function(cat){
     var cards=(bc[cat]||[]).map(function(l){
-      return '<div class="lc" style="position:relative">'+
-        '<a href="'+esc(l.url)+'" target="_blank" rel="noopener" style="text-decoration:none;display:flex;flex-direction:column;gap:6px;flex:1">'+
+      return '<a class="lc" href="'+esc(l.url)+'" target="_blank" rel="noopener">'+
         '<div style="font-size:24px">'+(l.ico||'🔗')+'</div>'+
         '<div style="font-size:13px;font-weight:700;color:#0F1111">'+esc(l.name)+'</div>'+
         (l.desc?'<div style="font-size:11px;color:#565959">'+esc(l.desc)+'</div>':'')+
         '<div style="font-size:10px;color:#00A8E1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(l.url)+'</div>'+
-        '</a>'+
-        '<div style="display:flex;gap:4px;margin-top:8px;border-top:1px solid #f0f0f0;padding-top:8px">'+
-        '<button class="sm se" data-led="'+esc(l.id)+'" style="flex:1">✎ Editar</button>'+
-        '<button class="sm sd" data-ldl="'+esc(l.id)+'" style="flex:1">✕ Excluir</button>'+
-        '</div>'+
-        '</div>';
+        '</a>';
     }).join('');
     return '<div class="ls"><h3>'+esc(cat)+'</h3><div class="lgr">'+cards+
       '<button class="la" data-ac="'+esc(cat)+'"><span style="font-size:22px">＋</span>'+
@@ -347,15 +343,8 @@ function rL(){
   sel.innerHTML='<option value="">Selecione...</option>'+data.cats.map(function(c){return'<option>'+esc(c)+'</option>';}).join('');
   w.onclick=null;
   w.addEventListener('click',function(e){
-    var ac=e.target.closest('[data-ac]');
-    var ed=e.target.closest('[data-led]');
-    var dl=e.target.closest('[data-ldl]');
-    if(ac){openL(null,ac.getAttribute('data-ac'));return;}
-    if(ed){openL(ed.getAttribute('data-led'),null);return;}
-    if(dl&&confirm('Excluir este link?')){
-      var d=lL();d.links=d.links.filter(function(x){return x.id!==dl.getAttribute('data-ldl');});
-      lsS('lk',d);rL();
-    }
+    var b=e.target.closest('[data-ac]');
+    if(b) openL(null,b.getAttribute('data-ac'));
   });
 }
 function openL(id,dc){
@@ -392,7 +381,24 @@ function addCat(){
 
 // ─── AGENDA ───────────────────────────────────────────────────────
 function navC(d){cM+=d;if(cM>11){cM=0;cY++;}if(cM<0){cM=11;cY--;}rC();}
-function evDay(iso){return lE().filter(function(e){return iso>=(e.st||'')&&iso<=(e.en||e.st||'');});}
+function evDay(iso){
+  return lE().filter(function(e){
+    if(!e.st)return false;
+    // ocorrencia direta
+    if(iso>=e.st&&iso<=(e.en||e.st))return true;
+    // recorrente
+    if(!e.rc||e.rc==='none')return false;
+    if(iso<e.st)return false;
+    var s=new Date(e.st+'T00:00:00'), c=new Date(iso+'T00:00:00');
+    var diff=Math.round((c-s)/86400000);
+    if(diff<=0)return false;
+    if(e.rc==='weekly')return diff%7===0;
+    if(e.rc==='biweekly')return diff%14===0;
+    if(e.rc==='monthly')return c.getDate()===s.getDate();
+    if(e.rc==='annually')return c.getDate()===s.getDate()&&c.getMonth()===s.getMonth();
+    return false;
+  });
+}
 function rC(){
   document.getElementById('ctit').textContent=MN[cM]+' '+cY;
   var today=td(),fd2=new Date(cY,cM,1).getDay(),dim=new Date(cY,cM+1,0).getDate(),dip=new Date(cY,cM,0).getDate();
@@ -403,7 +409,7 @@ function rC(){
     var evs=evDay(iso);
     h+='<div class="cd'+(iso===today?' td':'')+'" data-dt="'+iso+'">'+
       '<div class="dn">'+d+'</div>'+
-      evs.slice(0,3).map(function(e){return'<div class="ev '+(EC[e.tp]||'eo')+'" data-eid="'+esc(e.id)+'">'+esc(e.pe||e.ti)+'</div>';}).join('')+
+      evs.slice(0,3).map(function(e){return'<div class="ev '+(EC[e.tp]||'eo')+'" data-eid="'+esc(e.id)+'">'+esc(e.pe||e.ti)+(e.rc&&e.rc!=='none'?' 🔁':'')+'</div>';}).join('')+
       (evs.length>3?'<div class="em">+'+(evs.length-3)+' mais</div>':'')+
       '</div>';
   }
@@ -424,8 +430,9 @@ function rSide(){
   document.getElementById('nev').innerHTML=up.length?up.map(function(e){
     return'<div class="ei '+(EC[e.tp]||'eo')+'" data-eid="'+esc(e.id)+'">'+
     '<div style="font-size:10px;font-weight:700;opacity:.8">'+fd(e.st)+(e.en&&e.en!==e.st?' › '+fd(e.en):'')+'</div>'+
-    '<div style="font-weight:700">'+esc(e.ti)+'</div>'+
+    '<div style="font-weight:700">'+esc(e.ti)+(e.rc&&e.rc!=='none'?' 🔁':'')+'</div>'+
     (e.pe?'<div style="font-size:10px;opacity:.75">👤 '+esc(e.pe)+'</div>':'')+
+    (e.zm?'<div style="font-size:10px;margin-top:2px"><a href="'+esc(e.zm)+'" target="_blank" style="color:#00A8E1">🔗 Entrar na reunião</a></div>':'')+
     '</div>';
   }).join(''):'<div class="ne">Nenhum evento próximo</div>';
   document.getElementById('nev').onclick=null;
@@ -450,7 +457,9 @@ function openE(dd,eid){
   document.getElementById('epe').value=e?(e.pe||''):'';
   document.getElementById('est').value=e?e.st:(dd||td());
   document.getElementById('een').value=e?(e.en||e.st):(dd||td());
+  document.getElementById('ezm').value=e?(e.zm||''):'';
   document.getElementById('eob').value=e?(e.ob||''):'';
+  document.getElementById('erc').value=e?(e.rc||'none'):'none';
   document.getElementById('edw').style.display=e?'flex':'none';
   document.getElementById('ovle').classList.add('on');
 }
@@ -463,7 +472,8 @@ function saveE(){
   if(!st){alert('Selecione a data.');return;}
   var evs=lE();
   var e={id:id||uid(),ti:ti,tp:document.getElementById('etp').value,pe:document.getElementById('epe').value,
-    st:st,en:document.getElementById('een').value||st,ob:document.getElementById('eob').value.trim()};
+    st:st,en:document.getElementById('een').value||st,ob:document.getElementById('eob').value.trim(),
+    zm:document.getElementById('ezm').value.trim(),rc:document.getElementById('erc').value};
   lsS('ev',id?evs.map(function(x){return x.id===id?e:x;}):evs.concat([e]));
   closeE(); badges(); rC();
 }
