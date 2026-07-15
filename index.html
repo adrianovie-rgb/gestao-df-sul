@@ -219,12 +219,42 @@ var SC={open:'s-open',prog:'s-prog',done:'s-done',esc:'s-esc'};
 var calY=new Date().getFullYear(),calM=new Date().getMonth();
 var MN=['Janeiro','Fevereiro','Marco','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 var DN=['Dom','Seg','Ter','Qua','Qui','Sex','Sab'];
+var DB='https://gestao-df-sul-default-rtdb.firebaseio.com';
+var _cache={};var _evtSrc={};
+
+function dbUrl(p){return DB+'/'+p+'.json'}
+
+function dbGet(p,cb){
+  var x=new XMLHttpRequest();x.open('GET',dbUrl(p));
+  x.onload=function(){try{cb(JSON.parse(x.responseText||'null'))}catch(e){cb(null)}};
+  x.onerror=function(){cb(null)};x.send();
+}
+
+function dbSet(p,v,cb){
+  _cache[p]=v;
+  var x=new XMLHttpRequest();x.open('PUT',dbUrl(p));
+  x.setRequestHeader('Content-Type','application/json');
+  x.onload=function(){if(cb)cb(x.status===200)};
+  x.onerror=function(){if(cb)cb(false)};
+  x.send(JSON.stringify(v));
+}
+
+function dbListen(p,cb){
+  if(_evtSrc[p]){try{_evtSrc[p].close()}catch(e){}}
+  var es=new EventSource(dbUrl(p));
+  es.addEventListener('put',function(e){
+    try{var d=JSON.parse(e.data);if(d&&'data' in d){_cache[p]=d.data;cb(d.data)}}catch(ex){}
+  });
+  es.onerror=function(){setTimeout(function(){dbListen(p,cb)},5000)};
+  _evtSrc[p]=es;
+}
+
 var _mem={};
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
 function td(){return new Date().toISOString().slice(0,10)}
 function fd(iso){if(!iso)return'-';var p=iso.split('-');return p[2]+'/'+p[1]+'/'+p[0]}
-function lsG(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return _mem[k]||null}}
-function lsS(k,v){_mem[k]=v;try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function lsG(k){return _cache[k]||null}
+function lsS(k,v){_cache[k]=v}
 function showTab(t){
   document.querySelectorAll('.tab-content').forEach(function(e){e.classList.remove('active')});
   document.querySelectorAll('.tab-btn').forEach(function(e){e.classList.remove('active')});
