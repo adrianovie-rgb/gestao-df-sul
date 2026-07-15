@@ -327,12 +327,17 @@ function rL(){
   data.links.forEach(function(l){if(!bc[l.cat])bc[l.cat]=[];bc[l.cat].push(l);});
   w.innerHTML=data.cats.map(function(cat){
     var cards=(bc[cat]||[]).map(function(l){
-      return '<a class="lc" href="'+esc(l.url)+'" target="_blank" rel="noopener">'+
+      return '<div class="lc" style="position:relative">'+
+        '<a href="'+esc(l.url)+'" target="_blank" rel="noopener" style="text-decoration:none;display:flex;flex-direction:column;gap:6px">'+
         '<div style="font-size:24px">'+(l.ico||'🔗')+'</div>'+
         '<div style="font-size:13px;font-weight:700;color:#0F1111">'+esc(l.name)+'</div>'+
         (l.desc?'<div style="font-size:11px;color:#565959">'+esc(l.desc)+'</div>':'')+
         '<div style="font-size:10px;color:#00A8E1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(l.url)+'</div>'+
-        '</a>';
+        '</a>'+
+        '<div style="display:flex;gap:4px;margin-top:8px;padding-top:8px;border-top:1px solid #f0f0f0">'+
+        '<button class="sm se" data-led="'+esc(l.id)+'" style="flex:1">✎ Editar</button>'+
+        '<button class="sm sd" data-ldl="'+esc(l.id)+'" style="flex:1">✕ Excluir</button>'+
+        '</div></div>';
     }).join('');
     return '<div class="ls"><h3>'+esc(cat)+'</h3><div class="lgr">'+cards+
       '<button class="la" data-ac="'+esc(cat)+'"><span style="font-size:22px">＋</span>'+
@@ -343,8 +348,16 @@ function rL(){
   sel.innerHTML='<option value="">Selecione...</option>'+data.cats.map(function(c){return'<option>'+esc(c)+'</option>';}).join('');
   w.onclick=null;
   w.addEventListener('click',function(e){
-    var b=e.target.closest('[data-ac]');
-    if(b) openL(null,b.getAttribute('data-ac'));
+    var ac=e.target.closest('[data-ac]');
+    var ed=e.target.closest('[data-led]');
+    var dl=e.target.closest('[data-ldl]');
+    if(ac){openL(null,ac.getAttribute('data-ac'));return;}
+    if(ed){openL(ed.getAttribute('data-led'),null);return;}
+    if(dl&&confirm('Excluir este link?')){
+      var d=lL();
+      d.links=d.links.filter(function(x){return x.id!==dl.getAttribute('data-ldl');});
+      lsS('lk',d);rL();
+    }
   });
 }
 function openL(id,dc){
