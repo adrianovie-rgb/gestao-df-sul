@@ -221,6 +221,10 @@ var MN=['Janeiro','Fevereiro','Marco','Abril','Maio','Junho','Julho','Agosto','S
 var DN=['Dom','Seg','Ter','Qua','Qui','Sex','Sab'];
 var DB='https://gestao-df-sul-default-rtdb.firebaseio.com';
 var _cache={};var _evtSrc={};
+var _LS='gdsul_';
+function _lsG(k){try{var r=localStorage.getItem(_LS+k);if(!r)return null;var v=JSON.parse(r);return v;}catch(e){return null;}}
+function _lsS(k,v){try{localStorage.setItem(_LS+k,JSON.stringify(v));}catch(e){}}
+(function(){var t=_lsG('trats');_cache['trats']=Array.isArray(t)?t:[];var l=_lsG('links');_cache['links']=(l&&Array.isArray(l.cats))?l:null;var e=_lsG('events');_cache['events']=Array.isArray(e)?e:[];})();
 
 function dbUrl(p){return DB+'/'+p+'.json'}
 
@@ -231,7 +235,7 @@ function dbGet(p,cb){
 }
 
 function dbSet(p,v,cb){
-  _cache[p]=v;
+  _cache[p]=v;_lsS(p,v);
   var x=new XMLHttpRequest();x.open('PUT',dbUrl(p));
   x.setRequestHeader('Content-Type','application/json');
   x.onload=function(){if(cb)cb(x.status===200)};
@@ -267,7 +271,7 @@ function showTab(t){
   if(t==='links')renderL();
   if(t==='agenda')renderCal();
 }
-function loadT(){return _cache['trats']||[]}
+function loadT(){var d=_cache['trats'];return Array.isArray(d)?d:[];}
 function saveT2(d){dbSet('trats',d,function(){badges();renderT()})}
 function renderT(){
   var n=document.getElementById('fNode').value,r=document.getElementById('fResp').value,
@@ -318,7 +322,7 @@ function exportT(){
   var a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
   a.download='tratativas_'+td()+'.csv';a.click();
 }
-function loadL(){return _cache['links']||{cats:['Operacional','Metricas','Sistemas'],links:[
+function loadL(){var _ld=_cache['links'];if(_ld&&!_ld.error&&Array.isArray(_ld.cats)&&Array.isArray(_ld.links))return _ld;return {cats:['Operacional','Metricas','Sistemas'],links:[
   {id:'l1',name:'FM Metrics',url:'https://metrics.amazon.com',ico:'&#128202;',desc:'Metricas First Mile',cat:'Metricas'},
   {id:'l2',name:'PRISM',url:'https://trans-logistics.amazon.com/ssp/prism/flow/home_success',ico:'&#128666;',desc:'Planejamento transporte',cat:'Sistemas'},
   {id:'l3',name:'Cortex ESE8',url:'https://logistics.amazon.com.br/internal/operations/execution/itineraries?serviceAreaId=7fca7319-0762-40b2-9f5b-ebc8615a4522',ico:'&#128506;',desc:'Itinerarios ESE8',cat:'Sistemas'},
@@ -359,7 +363,7 @@ function saveL(){
   if(id)d.links=d.links.map(function(l){return l.id===id?e:l});else d.links.push(e);
   saveL2(d);closeLM();renderL();
 }
-function loadEv(){return _cache['events']||[]}
+function loadEv(){var d=_cache['events'];return Array.isArray(d)?d:[];}
 function saveEv2(d){dbSet('events',d,function(){badges();renderCal()})}
 function navC(dir){calM+=dir;if(calM>11){calM=0;calY++}if(calM<0){calM=11;calY--}renderCal()}
 function getEvDay(iso){return loadEv().filter(function(e){
@@ -505,14 +509,14 @@ function badges(){
   }
 
   // Carregar dados iniciais e iniciar listeners em tempo real
-  dbGet('trats',function(d){_cache['trats']=d||[];renderT();badges()});
-  dbGet('links',function(d){_cache['links']=d||null;renderL()});
-  dbGet('events',function(d){_cache['events']=d||[];badges()});
+  dbGet('trats',function(d){if(Array.isArray(d)){_cache['trats']=d;_lsS('trats',d);renderT();badges();}});
+  dbGet('links',function(d){if(d&&!d.error&&Array.isArray(d.cats)){_cache['links']=d;_lsS('links',d);renderL();}});
+  dbGet('events',function(d){if(Array.isArray(d)){_cache['events']=d;_lsS('events',d);badges();}});
 
   // Listeners SSE — atualização em tempo real
-  dbListen('trats',function(d){_cache['trats']=d||[];renderT();badges();setInd(true)});
-  dbListen('links',function(d){_cache['links']=d||null;renderL();setInd(true)});
-  dbListen('events',function(d){_cache['events']=d||[];badges();renderCal();setInd(true)});
+  dbListen('trats',function(d){if(Array.isArray(d)){_cache['trats']=d;_lsS('trats',d);renderT();badges();setInd(true);}});
+  dbListen('links',function(d){if(d&&!d.error&&Array.isArray(d.cats)){_cache['links']=d;_lsS('links',d);renderL();setInd(true);}});
+  dbListen('events',function(d){if(Array.isArray(d)){_cache['events']=d;_lsS('events',d);badges();renderCal();setInd(true);}});
 
   setTimeout(function(){setInd(true)},2000);
 })();</script></body></html>
