@@ -181,6 +181,8 @@ tr:hover td{background:#fafbfc}
     <div class="fi"><label>Pessoa</label><select id="epe"><option value="">Geral/Todos</option><option>Kimberly</option><option>Adriano</option><option>Marina</option><option>Vinicius</option><option>João</option></select></div>
     <div class="fi"><label>Data Início</label><input type="date" id="est"></div>
     <div class="fi"><label>Data Fim</label><input type="date" id="een"></div>
+    <div class="fi"><label>Horário Início</label><input type="time" id="ehi" placeholder="08:00"></div>
+    <div class="fi"><label>Horário Fim</label><input type="time" id="ehf" placeholder="09:00"></div>
     <div class="fi fl"><label>🔗 Link Zoom / Reunião</label><input type="text" id="ezm" placeholder="https://zoom.us/j/..."></div>
     <div class="fi"><label>Observação</label><input type="text" id="eob" placeholder="Opcional"></div>
     <div class="fi"><label>🔁 Recorrência</label><select id="erc"><option value="none">Sem recorrência</option><option value="weekly">Semanal</option><option value="biweekly">Quinzenal</option><option value="monthly">Mensal</option><option value="annually">Anual</option></select></div>
@@ -422,7 +424,7 @@ function rC(){
     var evs=evDay(iso);
     h+='<div class="cd'+(iso===today?' td':'')+'" data-dt="'+iso+'">'+
       '<div class="dn">'+d+'</div>'+
-      evs.slice(0,3).map(function(e){return'<div class="ev '+(EC[e.tp]||'eo')+'" data-eid="'+esc(e.id)+'">'+esc(e.pe||e.ti)+(e.rc&&e.rc!=='none'?' 🔁':'')+'</div>';}).join('')+
+      evs.slice(0,3).map(function(e){return'<div class="ev '+(EC[e.tp]||'eo')+'" data-eid="'+esc(e.id)+'">'+esc(e.pe||e.ti)+(e.hi?' '+e.hi:'')+(e.rc&&e.rc!=='none'?' 🔁':'')+'</div>';}).join('')+
       (evs.length>3?'<div class="em">+'+(evs.length-3)+' mais</div>':'')+
       '</div>';
   }
@@ -442,7 +444,7 @@ function rSide(){
   var up=evs.filter(function(e){return(e.en||e.st)>=today;}).sort(function(a,b){return a.st.localeCompare(b.st);}).slice(0,8);
   document.getElementById('nev').innerHTML=up.length?up.map(function(e){
     return'<div class="ei '+(EC[e.tp]||'eo')+'" data-eid="'+esc(e.id)+'">'+
-    '<div style="font-size:10px;font-weight:700;opacity:.8">'+fd(e.st)+(e.en&&e.en!==e.st?' › '+fd(e.en):'')+'</div>'+
+    '<div style="font-size:10px;font-weight:700;opacity:.8">'+fd(e.st)+(e.hi?' '+e.hi:'')+(e.en&&e.en!==e.st?' › '+fd(e.en)+(e.hf?' '+e.hf:''):'')+'</div>'+
     '<div style="font-weight:700">'+esc(e.ti)+(e.rc&&e.rc!=='none'?' 🔁':'')+'</div>'+
     (e.pe?'<div style="font-size:10px;opacity:.75">👤 '+esc(e.pe)+'</div>':'')+
     (e.zm?'<div style="font-size:10px;margin-top:2px"><a href="'+esc(e.zm)+'" target="_blank" style="color:#00A8E1">🔗 Entrar na reunião</a></div>':'')+
@@ -470,6 +472,8 @@ function openE(dd,eid){
   document.getElementById('epe').value=e?(e.pe||''):'';
   document.getElementById('est').value=e?e.st:(dd||td());
   document.getElementById('een').value=e?(e.en||e.st):(dd||td());
+  document.getElementById('ehi').value=e?(e.hi||''):'';
+  document.getElementById('ehf').value=e?(e.hf||''):'';
   document.getElementById('ezm').value=e?(e.zm||''):'';
   document.getElementById('eob').value=e?(e.ob||''):'';
   document.getElementById('erc').value=e?(e.rc||'none'):'none';
@@ -486,7 +490,8 @@ function saveE(){
   var evs=lE();
   var e={id:id||uid(),ti:ti,tp:document.getElementById('etp').value,pe:document.getElementById('epe').value,
     st:st,en:document.getElementById('een').value||st,ob:document.getElementById('eob').value.trim(),
-    zm:document.getElementById('ezm').value.trim(),rc:document.getElementById('erc').value};
+    zm:document.getElementById('ezm').value.trim(),rc:document.getElementById('erc').value,
+    hi:document.getElementById('ehi').value,hf:document.getElementById('ehf').value};
   lsS('ev',id?evs.map(function(x){return x.id===id?e:x;}):evs.concat([e]));
   closeE(); badges(); rC();
 }
