@@ -1,0 +1,455 @@
+<!DOCTYPE html><html lang='pt-BR'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Gestao DF-SUL</title><style>:root{--amz-orange:#FF9900;--amz-dark:#232F3E;--amz-blue:#00A8E1;--bg:#F5F7FA;--card:#FFFFFF;--border:#D5D9D9;--txt:#0F1111;--txt2:#565959;--font:'Amazon Ember','Segoe UI',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--txt);font-size:14px;min-height:100vh}
+.site-header{background:#131921;padding:0 24px;display:flex;align-items:center;gap:16px;height:54px;border-bottom:3px solid var(--amz-orange)}
+.logo-text{font-size:21px;font-weight:700;color:#fff;font-style:italic}
+.logo-smile{display:block;width:40px;height:7px;margin-top:-1px}
+.hdr-sep{width:1px;height:30px;background:#3a4553}
+.hdr-title{color:#fff;font-size:15px;font-weight:700}
+.hdr-sub{color:#8fa3b1;font-size:11px}
+.tab-bar{background:#1a2533;display:flex;padding:0 24px;gap:2px;border-bottom:1px solid #2d3a4a}
+.tab-btn{padding:12px 20px;color:#8fa3b1;font-size:13px;font-weight:600;cursor:pointer;border:none;background:none;border-bottom:3px solid transparent;transition:all .2s}
+.tab-btn:hover{color:#fff}.tab-btn.active{color:#fff;border-bottom-color:var(--amz-orange)}
+.tbadge{background:var(--amz-orange);color:#000;border-radius:10px;padding:1px 6px;font-size:10px;font-weight:800;margin-left:5px}
+.tab-content{display:none;padding:24px;max-width:1400px;margin:0 auto}.tab-content.active{display:block}
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
+.tleft{display:flex;gap:10px;align-items:center;flex-wrap:wrap;flex:1}
+.toolbar select,.toolbar input[type=text]{background:#fff;border:1px solid var(--border);border-radius:6px;padding:7px 11px;font-size:12px;color:var(--txt);outline:none}
+.toolbar select:focus,.toolbar input:focus{border-color:var(--amz-orange)}
+.btn{padding:8px 18px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:all .15s}
+.btn-p{background:var(--amz-orange);color:#000}.btn-p:hover{background:#e68900}
+.btn-g{background:#fff;border:1px solid var(--border);color:var(--txt2)}.btn-g:hover{border-color:var(--amz-orange);color:var(--txt)}
+.tw{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.tt{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}
+.tt th{padding:10px 12px;font-size:10px;font-weight:700;color:#565959;text-transform:uppercase;letter-spacing:.6px;text-align:left;background:#f8f9fa;border-bottom:2px solid var(--border);white-space:nowrap}
+.tt td{padding:9px 12px;border-bottom:1px solid #eff0f1;color:var(--txt);vertical-align:top;word-break:break-word;white-space:normal;line-height:1.5}
+.tt tr:last-child td{border-bottom:none}.tt tr:hover td{background:#fafbfc}
+.npill{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:800;color:#fff}
+.spill{display:inline-block;padding:3px 9px;border-radius:12px;font-size:10px;font-weight:700}
+.s-open{background:#FEF3C7;color:#92400E}.s-prog{background:#DBEAFE;color:#1e40af}
+.s-done{background:#DCFCE7;color:#166534}.s-esc{background:#FEE2E2;color:#991B1B}
+.pok{color:#166534;font-weight:700}.palert{color:#b45309;font-weight:700}.plate{color:#991B1B;font-weight:700}
+.bsm{padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700;cursor:pointer;border:none}
+.bed{background:#dbeafe;color:#1e40af}.bed:hover{background:#bfdbfe}
+.bdl{background:#fee2e2;color:#991b1b}.bdl:hover{background:#fecaca}
+.empty{text-align:center;padding:48px 24px;color:var(--txt2)}.empty .ei{font-size:40px;margin-bottom:12px}
+.lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.lcard{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;transition:all .2s;text-decoration:none;display:flex;flex-direction:column;gap:6px}
+.lcard:hover{border-color:var(--amz-orange);box-shadow:0 2px 10px rgba(255,153,0,.15);transform:translateY(-1px)}
+.lico{font-size:24px}.lname{font-size:13px;font-weight:700;color:var(--txt)}
+.ldesc{font-size:11px;color:var(--txt2);line-height:1.4}
+.lurl{font-size:10px;color:var(--amz-blue);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lsec{margin-bottom:24px}
+.lsec h3{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--txt2);margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid var(--border)}
+.ladd{background:none;border:2px dashed var(--border);border-radius:10px;padding:16px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:90px}
+.ladd:hover{border-color:var(--amz-orange);background:#fffbf0}
+.alay{display:grid;grid-template-columns:1fr 310px;gap:20px}
+@media(max-width:900px){.alay{grid-template-columns:1fr}}
+.cwrap{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.chead{background:#f8f9fa;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.chead h2{font-size:15px;font-weight:700}
+.cnav{display:flex;gap:6px;align-items:center}
+.bnav{background:#fff;border:1px solid var(--border);border-radius:6px;padding:5px 12px;cursor:pointer;font-size:14px;font-weight:700}
+.bnav:hover{border-color:var(--amz-orange)}
+.cgrid{display:grid;grid-template-columns:repeat(7,1fr);padding:10px 8px}
+.cdow{text-align:center;font-size:10px;font-weight:700;text-transform:uppercase;color:var(--txt2);padding:6px 0;border-bottom:1px solid var(--border);margin-bottom:4px}
+.cday{min-height:72px;border-radius:7px;padding:4px 5px;cursor:pointer;transition:background .15s}
+.cday:hover{background:#f5f7fa}
+.cday.today .dnum{background:var(--amz-orange);color:#000;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-weight:800}
+.cday.otm .dnum{color:#c8cdd2}
+.dnum{font-size:12px;font-weight:600;color:var(--txt);width:22px;height:22px;display:flex;align-items:center;justify-content:center;margin-bottom:2px}
+.cev{font-size:9px;font-weight:700;padding:2px 4px;border-radius:3px;margin-bottom:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mev{font-size:9px;color:var(--txt2);padding:0 4px}
+.ef{background:#fce7f3;color:#9d174d}.ed{background:#dbeafe;color:#1e40af}
+.ew{background:#dcfce7;color:#166534}.er{background:#ede9fe;color:#5b21b6}.eo{background:#f1f5f9;color:#475569}
+.aside{display:flex;flex-direction:column;gap:14px}
+.scard{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.shead{padding:12px 16px;background:#f8f9fa;border-bottom:1px solid var(--border);font-size:11px;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.5px}
+.sbody{padding:12px 16px}
+.eitem{padding:8px 10px;border-radius:7px;margin-bottom:6px;font-size:12px;cursor:pointer}
+.eitem .edt{font-size:10px;font-weight:700;opacity:.8;margin-bottom:2px}
+.eitem .eti{font-weight:700}.eitem .ewho{font-size:10px;opacity:.75;margin-top:1px}
+.legrow{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--txt2);margin-bottom:6px}
+.ldot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+.noev{text-align:center;padding:16px;color:var(--txt2);font-size:12px}
+.ovl{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;align-items:center;justify-content:center}
+.ovl.open{display:flex}
+.modal{background:#1a1d20;border-radius:14px;width:min(580px,96vw);max-height:90vh;overflow-y:auto;box-shadow:0 16px 60px rgba(0,0,0,.6);border:1px solid #2d3035;color:#e8eaed}
+.mhead{padding:18px 24px 14px;border-bottom:1px solid #2d3035;display:flex;align-items:center;justify-content:space-between}
+.mhead h3{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#9aa0a6;margin:0}
+.bclose{background:none;border:none;color:#9aa0a6;font-size:20px;cursor:pointer;line-height:1}.bclose:hover{color:var(--amz-orange)}
+.mbody{padding:20px 24px;display:grid;gap:14px}.tc{grid-template-columns:1fr 1fr}
+.field{display:flex;flex-direction:column;gap:5px}.field.full{grid-column:1/-1}
+.field label{font-size:10px;font-weight:700;color:#9aa0a6;text-transform:uppercase;letter-spacing:.7px}
+.field input,.field select,.field textarea{background:#0f1214;border:1px solid #2d3035;border-radius:6px;padding:8px 11px;font-size:12px;color:#e8eaed;outline:none;font-family:var(--font)}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--amz-orange)}
+.field textarea{min-height:80px;resize:vertical}
+.mfoot{padding:14px 24px 18px;border-top:1px solid #2d3035;display:flex;justify-content:flex-end;gap:10px;background:#1a1d20;border-radius:0 0 14px 14px}
+.bsave{background:var(--amz-orange);color:#000;border:none;border-radius:8px;padding:9px 22px;font-size:12px;font-weight:800;cursor:pointer}.bsave:hover{background:#e8960f}
+.bcanc{background:none;border:1px solid #3d4449;color:#9aa0a6;border-radius:8px;padding:9px 16px;font-size:12px;cursor:pointer}.bcanc:hover{border-color:#9aa0a6;color:#e8eaed}</style></head><body><div class='site-header'>
+  <div style='display:flex;flex-direction:column'>
+    <span class='logo-text'>amazon</span>
+    <svg class='logo-smile' viewBox='0 0 100 20' fill='none'><path d='M5 5 Q50 22 95 5' stroke='#FF9900' stroke-width='5' stroke-linecap='round' fill='none'/><polygon points='88,2 97,8 90,12' fill='#FF9900'/></svg>
+  </div>
+  <div class='hdr-sep'></div>
+  <div><div class='hdr-title'>Painel de Gestao DF-SUL</div><div class='hdr-sub'>AMZL First Mile &middot; Tratativas &middot; Links &middot; Agenda</div></div>
+</div>
+<div class='tab-bar'>
+  <button class='tab-btn active' onclick='showTab("tratativas",this)'>&#128203; Tratativas <span class='tbadge' id='badgeTrat'>0</span></button>
+  <button class='tab-btn' onclick='showTab("links",this)'>&#128279; Links Rapidos</button>
+  <button class='tab-btn' onclick='showTab("agenda",this)'>&#128197; Agenda <span class='tbadge' id='badgeAg'>0</span></button>
+</div>
+<div class='tab-content active' id='tabTratativas'>
+  <div class='toolbar'>
+    <div class='tleft'>
+      <select id='fNode' onchange='renderT()'><option value=''>Todos os nodes</option></select>
+      <select id='fResp' onchange='renderT()'><option value=''>Todos responsaveis</option><option>Kimberly</option><option>Adriano</option><option>Marina</option><option>Vinicius</option><option>Joao</option></select>
+      <select id='fStat' onchange='renderT()'><option value=''>Todos os status</option><option value='open'>Em Aberto</option><option value='prog'>Em Andamento</option><option value='done'>Resolvido</option><option value='esc'>Escalado</option></select>
+      <input type='text' id='fSearch' placeholder='Buscar...' oninput='renderT()' style='min-width:140px'>
+    </div>
+    <button class='btn btn-g' onclick='exportT()'>&#11015; Exportar</button>
+    <button class='btn btn-p' onclick='openTM()'>+ Nova Tratativa</button>
+  </div>
+  <div class='tw'><table class='tt'>
+    <colgroup><col style='width:78px'><col style='width:90px'><col style='width:200px'><col style='width:200px'><col style='width:88px'><col style='width:98px'><col style='width:98px'><col style='width:78px'></colgroup>
+    <thead><tr><th>Node</th><th>Responsavel</th><th>Tratativa</th><th>Andamento</th><th>Prazo</th><th>Status</th><th>Incluido em</th><th>Acoes</th></tr></thead>
+    <tbody id='tBody'></tbody>
+  </table></div>
+</div>
+<div class='tab-content' id='tabLinks'>
+  <div id='linksWrap'></div>
+  <div style='margin-top:12px;display:flex;gap:10px'>
+    <button class='btn btn-p' onclick='openLM()'>+ Adicionar Link</button>
+    <button class='btn btn-g' onclick='addCat()'>+ Nova Categoria</button>
+  </div>
+</div>
+<div class='tab-content' id='tabAgenda'>
+  <div class='alay'>
+    <div><div class='cwrap'>
+      <div class='chead'>
+        <div class='cnav'><button class='bnav' onclick='navC(-1)'>&#8249;</button></div>
+        <h2 id='calTitle'></h2>
+        <div class='cnav'>
+          <button class='bnav' onclick='navC(1)'>&#8250;</button>
+          <button class='btn btn-p' style='padding:5px 14px;font-size:11px;margin-left:8px' onclick='openEM()'>+ Evento</button>
+        </div>
+      </div>
+      <div class='cgrid' id='calGrid'></div>
+    </div></div>
+    <div class='aside'>
+      <div class='scard'><div class='shead'>Proximos Eventos</div><div class='sbody' id='nextEv'></div></div>
+      <div class='scard'><div class='shead'>Ferias / Ausencias</div><div class='sbody' id='feriasEl'></div></div>
+      <div class='scard'><div class='shead'>Legenda</div><div class='sbody'>
+        <div class='legrow'><div class='ldot ef'></div> Ferias / Ausencia</div>
+        <div class='legrow'><div class='ldot ed'></div> Reuniao DDD</div>
+        <div class='legrow'><div class='ldot ew'></div> WBR com Parceiros</div>
+        <div class='legrow'><div class='ldot er'></div> Outras Reunioes</div>
+        <div class='legrow'><div class='ldot eo'></div> Outro</div>
+      </div></div>
+    </div>
+  </div>
+</div>
+<div class='ovl' id='ovlT'><div class='modal'>
+  <div class='mhead'><h3 id='tmTitle'>Nova Tratativa</h3><button class='bclose' onclick='closeTM()'>&#10005;</button></div>
+  <div class='mbody tc'>
+    <input type='hidden' id='tId'>
+    <div class='field'><label>Node</label><select id='tNode'><option value=''>Selecione...</option><option>ECB8</option><option>EGO8</option><option>EIJ8</option><option>EJO8</option><option>ELO8</option><option>EME8</option><option>EMR8</option><option>EOZ8</option><option>ERS8</option><option>ESB8</option><option>ESE8</option><option>EUM8</option><option>EVE8</option><option>EXS9</option></select></div>
+    <div class='field'><label>Responsavel</label><select id='tResp'><option value=''>Selecione...</option><option>Kimberly</option><option>Adriano</option><option>Marina</option><option>Vinicius</option><option>Joao</option></select></div>
+    <div class='field full'><label>Tratativa</label><textarea id='tDesc' placeholder='Descreva a tratativa...'></textarea></div>
+    <div class='field full'><label>Andamento</label><textarea id='tAnd' placeholder='Status atual das acoes...' style='min-height:60px'></textarea></div>
+    <div class='field'><label>Prazo</label><input type='date' id='tPrazo'></div>
+    <div class='field'><label>Status</label><select id='tStat'><option value='open'>Em Aberto</option><option value='prog'>Em Andamento</option><option value='done'>Resolvido</option><option value='esc'>Escalado</option></select></div>
+  </div>
+  <div class='mfoot'><button class='bcanc' onclick='closeTM()'>Cancelar</button><button class='bsave' onclick='saveT()'>Salvar</button></div>
+</div></div>
+<div class='ovl' id='ovlL'><div class='modal'>
+  <div class='mhead'><h3 id='lmTitle'>Novo Link</h3><button class='bclose' onclick='closeLM()'>&#10005;</button></div>
+  <div class='mbody tc'>
+    <input type='hidden' id='lId'>
+    <div class='field'><label>Nome</label><input type='text' id='lName' placeholder='Ex: FM Metrics'></div>
+    <div class='field'><label>Categoria</label><select id='lCat'><option value=''>Selecione...</option></select></div>
+    <div class='field full'><label>URL</label><input type='text' id='lUrl' placeholder='https://...'></div>
+    <div class='field'><label>Icone (emoji)</label><input type='text' id='lIco' placeholder='📊' maxlength='4'></div>
+    <div class='field'><label>Descricao</label><input type='text' id='lDesc' placeholder='Opcional'></div>
+  </div>
+  <div class='mfoot'><button class='bcanc' onclick='closeLM()'>Cancelar</button><button class='bsave' onclick='saveL()'>Salvar</button></div>
+</div></div>
+<div class='ovl' id='ovlE'><div class='modal'>
+  <div class='mhead'><h3 id='emTitle'>Novo Evento</h3><button class='bclose' onclick='closeEM()'>&#10005;</button></div>
+  <div class='mbody tc'>
+    <input type='hidden' id='eId'>
+    <div class='field full'><label>Titulo</label><input type='text' id='eTitle' placeholder='Ex: Ferias Adriano, WBR ECB8...'></div>
+    <div class='field'><label>Tipo</label><select id='eType'><option value='ferias'>Ferias / Ausencia</option><option value='ddd'>Reuniao DDD</option><option value='wbr'>WBR com Parceiros</option><option value='reun'>Outra Reuniao</option><option value='outro'>Outro</option></select></div>
+    <div class='field'><label>Pessoa</label><select id='ePes'><option value=''>Geral / Todos</option><option>Kimberly</option><option>Adriano</option><option>Marina</option><option>Vinicius</option><option>Joao</option></select></div>
+    <div class='field full'>
+      <label>Tipo de data</label>
+      <div style='display:flex;gap:8px;margin-top:4px'>
+        <label style='display:flex;align-items:center;gap:6px;cursor:pointer;color:#e8eaed;font-size:12px;text-transform:none;letter-spacing:0'>
+          <input type='radio' name='eDateMode' id='eModeRange' value='range' checked onchange='toggleDateMode()' style='accent-color:#FF9900;background:none;border:none;padding:0'> Periodo
+        </label>
+        <label style='display:flex;align-items:center;gap:6px;cursor:pointer;color:#e8eaed;font-size:12px;text-transform:none;letter-spacing:0'>
+          <input type='radio' name='eDateMode' id='eModeDays' value='days' onchange='toggleDateMode()' style='accent-color:#FF9900;background:none;border:none;padding:0'> Dias especificos
+        </label>
+      </div>
+    </div>
+    <div id='eModeRangeFields' style='display:contents'>
+      <div class='field'><label>Data Inicio</label><input type='date' id='eStart'></div>
+      <div class='field'><label>Data Fim</label><input type='date' id='eEnd'></div>
+    </div>
+    <div id='eModeDaysFields' class='field full' style='display:none'>
+      <label>Selecione os dias</label>
+      <div style='display:flex;align-items:center;gap:8px;margin-bottom:8px'>
+        <button type='button' onclick='pickerNav(-1)' style='background:#0f1214;border:1px solid #2d3035;color:#e8eaed;border-radius:5px;padding:3px 10px;cursor:pointer;font-weight:700'>&#8249;</button>
+        <span id='pickerTitle' style='flex:1;text-align:center;font-size:12px;font-weight:700;color:#e8eaed'></span>
+        <button type='button' onclick='pickerNav(1)' style='background:#0f1214;border:1px solid #2d3035;color:#e8eaed;border-radius:5px;padding:3px 10px;cursor:pointer;font-weight:700'>&#8250;</button>
+      </div>
+      <div id='pickerGrid' style='display:grid;grid-template-columns:repeat(7,1fr);gap:2px'></div>
+      <div id='pickerSelected' style='margin-top:8px;font-size:10px;color:#9aa0a6'></div>
+    </div>
+    <div class='field full'><label>Observacao</label><input type='text' id='eObs' placeholder='Opcional'></div>
+    <div class='field'><label>Recorrencia</label><select id='eRecur'><option value='none'>Sem recorrencia</option><option value='weekly'>Semanal</option><option value='biweekly'>Quinzenal</option><option value='monthly'>Mensal</option></select></div>
+    <div class='field' id='eDel' style='display:none'><label>&nbsp;</label><button class='bcanc' style='border-color:#991b1b;color:#991b1b' onclick='delEv()'>Excluir evento</button></div>
+  </div>
+  <div class='mfoot'><button class='bcanc' onclick='closeEM()'>Cancelar</button><button class='bsave' onclick='saveEv()'>Salvar</button></div>
+</div></div><script>var NC={ECB8:'#1e40af',EIJ8:'#7c3aed',EJO8:'#0369a1',ELO8:'#065f46',EME8:'#9a3412',EMR8:'#1d4ed8',EOZ8:'#6b21a8',EGO8:'#14532d',ERS8:'#92400e',ESB8:'#1e3a5f',ESE8:'#7f1d1d',EUM8:'#3b0764',EVE8:'#134e4a',EXS9:'#78350f'};
+var EVC={ferias:'ef',ddd:'ed',wbr:'ew',reun:'er',outro:'eo'};
+var EVL={ferias:'Ferias',ddd:'DDD',wbr:'WBR',reun:'Reuniao',outro:'Outro'};
+var SL={open:'Em Aberto',prog:'Em Andamento',done:'Resolvido',esc:'Escalado'};
+var SC={open:'s-open',prog:'s-prog',done:'s-done',esc:'s-esc'};
+var calY=new Date().getFullYear(),calM=new Date().getMonth();
+var MN=['Janeiro','Fevereiro','Marco','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+var DN=['Dom','Seg','Ter','Qua','Qui','Sex','Sab'];
+var _mem={};
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function td(){return new Date().toISOString().slice(0,10)}
+function fd(iso){if(!iso)return'-';var p=iso.split('-');return p[2]+'/'+p[1]+'/'+p[0]}
+function lsG(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return _mem[k]||null}}
+function lsS(k,v){_mem[k]=v;try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function showTab(t,el){
+  document.querySelectorAll('.tab-content').forEach(function(e){e.classList.remove('active')});
+  document.querySelectorAll('.tab-btn').forEach(function(e){e.classList.remove('active')});
+  document.getElementById('tab'+t.charAt(0).toUpperCase()+t.slice(1)).classList.add('active');
+  el.classList.add('active');
+  if(t==='tratativas')renderT();if(t==='links')renderL();if(t==='agenda')renderCal();
+}
+function loadT(){return lsG('dfsT')||[]}
+function saveT2(d){lsS('dfsT',d);badges()}
+function renderT(){
+  var n=document.getElementById('fNode').value,r=document.getElementById('fResp').value,
+      s=document.getElementById('fStat').value,q=document.getElementById('fSearch').value.toLowerCase();
+  var d=loadT();
+  if(n)d=d.filter(function(t){return t.node===n});
+  if(r)d=d.filter(function(t){return t.resp===r});
+  if(s)d=d.filter(function(t){return t.stat===s});
+  if(q)d=d.filter(function(t){return(t.desc||'').toLowerCase().includes(q)||(t.and||'').toLowerCase().includes(q)||(t.node||'').toLowerCase().includes(q)});
+  var tb=document.getElementById('tBody'),ts=td();
+  if(!d.length){tb.innerHTML='<tr><td colspan="8"><div class="empty"><div class="ei">&#128203;</div><p>Nenhuma tratativa encontrada.<br>Clique em <b>+ Nova Tratativa</b> para comecar.</p></div></td></tr>';return}
+  tb.innerHTML=d.map(function(t){
+    var pc='',ps=fd(t.prazo);
+    if(t.prazo&&t.stat!=='done'){var df=Math.ceil((new Date(t.prazo)-new Date(ts))/86400000);if(df<0){pc='plate';ps+=' &#9888;'}else if(df<=3)pc='palert';else pc='pok'}
+    return'<tr><td><span class="npill" style="background:'+(NC[t.node]||'#475569')+'">'+(t.node||'-')+'</span></td>'+
+    '<td style="font-weight:600">'+(t.resp||'-')+'</td><td>'+(t.desc||'-')+'</td><td>'+(t.and||'-')+'</td>'+
+    '<td class="'+pc+'">'+ps+'</td><td><span class="spill '+(SC[t.stat]||'s-open')+'">'+(SL[t.stat]||'Em Aberto')+'</span></td>'+
+    '<td style="font-size:11px;color:#565959">'+fd(t.cat)+'<br><small>'+(t.resp||'')+'</small></td>'+
+    '<td><button class="bsm bed" onclick="openTM(\''+t.id+'\')">&#9998;</button> <button class="bsm bdl" onclick="delT(\''+t.id+'\')">&#10005;</button></td></tr>';
+  }).join('');
+}
+function openTM(id){
+  var t=id?loadT().find(function(x){return x.id===id}):null;
+  document.getElementById('tmTitle').textContent=t?'Editar Tratativa':'Nova Tratativa';
+  document.getElementById('tId').value=t?t.id:'';
+  document.getElementById('tNode').value=t?t.node:'';document.getElementById('tResp').value=t?t.resp:'';
+  document.getElementById('tDesc').value=t?t.desc:'';document.getElementById('tAnd').value=t?t.and:'';
+  document.getElementById('tPrazo').value=t?t.prazo:'';document.getElementById('tStat').value=t?t.stat:'open';
+  document.getElementById('ovlT').classList.add('open');
+}
+function closeTM(){document.getElementById('ovlT').classList.remove('open')}
+function saveT(){
+  var id=document.getElementById('tId').value,node=document.getElementById('tNode').value,
+      resp=document.getElementById('tResp').value,desc=document.getElementById('tDesc').value.trim();
+  if(!node||!resp||!desc){alert('Preencha Node, Responsavel e Tratativa.');return}
+  var d=loadT(),e={id:id||uid(),node:node,resp:resp,desc:desc,and:document.getElementById('tAnd').value.trim(),
+    prazo:document.getElementById('tPrazo').value,stat:document.getElementById('tStat').value,
+    cat:id?(d.find(function(t){return t.id===id})||{}).cat||td():td()};
+  if(id)d=d.map(function(t){return t.id===id?e:t});else d.unshift(e);
+  saveT2(d);closeTM();renderT();
+}
+function delT(id){if(!confirm('Remover?'))return;saveT2(loadT().filter(function(t){return t.id!==id}));renderT()}
+function exportT(){
+  var d=loadT();if(!d.length){alert('Sem dados.');return}
+  var rows=[['Node','Responsavel','Tratativa','Andamento','Prazo','Status','Data']];
+  d.forEach(function(t){rows.push([t.node,t.resp,t.desc,t.and||'',fd(t.prazo),SL[t.stat]||'',fd(t.cat)])});
+  var csv=rows.map(function(r){return r.map(function(c){return'"'+(c||'').replace(/"/g,'""')+'"'}).join(',')}).join('\n');
+  var a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download='tratativas_'+td()+'.csv';a.click();
+}
+function loadL(){return lsG('dfsL')||{cats:['Operacional','Metricas','Sistemas'],links:[
+  {id:'l1',name:'FM Metrics',url:'https://metrics.amazon.com',ico:'&#128202;',desc:'Metricas First Mile',cat:'Metricas'},
+  {id:'l2',name:'PRISM',url:'https://trans-logistics.amazon.com/ssp/prism/flow/home_success',ico:'&#128666;',desc:'Planejamento transporte',cat:'Sistemas'},
+  {id:'l3',name:'Cortex ESE8',url:'https://logistics.amazon.com.br/internal/operations/execution/itineraries?serviceAreaId=7fca7319-0762-40b2-9f5b-ebc8615a4522',ico:'&#128506;',desc:'Itinerarios ESE8',cat:'Sistemas'},
+  {id:'l4',name:'Truck Planning',url:'https://adrianovie-rgb.github.io/Truck-Planning-DF-SUL/',ico:'&#128667;',desc:'Planejamento veiculos DF-SUL',cat:'Operacional'},
+  {id:'l5',name:'WBR DF-SUL',url:'https://adrianovie-rgb.github.io/WBR---DF-SUL/',ico:'&#128200;',desc:'Dashboard WBR semanal',cat:'Metricas'},
+  {id:'l6',name:'Wash Report',url:'https://adrianovie-rgb.github.io/fm-edsps/index.html',ico:'&#128221;',desc:'Relatorio diario EDSPs',cat:'Operacional'}
+]}}
+function saveL2(d){lsS('dfsL',d)}
+function renderL(){
+  var data=loadL(),w=document.getElementById('linksWrap'),bC={};
+  data.cats.forEach(function(c){bC[c]=[]});
+  data.links.forEach(function(l){if(!bC[l.cat])bC[l.cat]=[];bC[l.cat].push(l)});
+  w.innerHTML=Object.keys(bC).map(function(cat){
+    return'<div class="lsec"><h3>'+cat+'</h3><div class="lgrid">'+
+    bC[cat].map(function(l){return'<a class="lcard" href="'+l.url+'" target="_blank" rel="noopener"><div class="lico">'+(l.ico||'&#128279;')+'</div><div class="lname">'+l.name+'</div>'+(l.desc?'<div class="ldesc">'+l.desc+'</div>':'')+'<div class="lurl">'+l.url+'</div></a>'}).join('')+
+    '<div class="ladd" onclick="openLM(null,\''+cat+'\')"><span style="font-size:22px">&#65291;</span><span style="font-size:11px;color:#565959;font-weight:600">Adicionar link</span></div>'+
+    '</div></div>';
+  }).join('');
+  var s=document.getElementById('lCat');
+  if(s)s.innerHTML='<option value="">Selecione...</option>'+data.cats.map(function(c){return'<option value="'+c+'">'+c+'</option>'}).join('');
+}
+function openLM(id,dc){
+  var data=loadL(),l=id?data.links.find(function(x){return x.id===id}):null;
+  document.getElementById('lmTitle').textContent=l?'Editar Link':'Novo Link';
+  document.getElementById('lId').value=l?l.id:'';document.getElementById('lName').value=l?l.name:'';
+  document.getElementById('lUrl').value=l?l.url:'';document.getElementById('lIco').value=l?l.ico:'';
+  document.getElementById('lDesc').value=l?l.desc:'';renderL();
+  setTimeout(function(){var s=document.getElementById('lCat');if(s)s.value=l?l.cat:(dc||'')},50);
+  document.getElementById('ovlL').classList.add('open');
+}
+function closeLM(){document.getElementById('ovlL').classList.remove('open')}
+function addCat(){var n=prompt('Nome da categoria:');if(!n||!n.trim())return;var d=loadL();if(!d.cats.includes(n.trim()))d.cats.push(n.trim());saveL2(d);renderL()}
+function saveL(){
+  var id=document.getElementById('lId').value,name=document.getElementById('lName').value.trim(),
+      url=document.getElementById('lUrl').value.trim(),cat=document.getElementById('lCat').value;
+  if(!name||!url||!cat){alert('Preencha Nome, URL e Categoria.');return}
+  var d=loadL(),e={id:id||uid(),name:name,url:url,ico:document.getElementById('lIco').value||'&#128279;',desc:document.getElementById('lDesc').value.trim(),cat:cat};
+  if(id)d.links=d.links.map(function(l){return l.id===id?e:l});else d.links.push(e);
+  saveL2(d);closeLM();renderL();
+}
+function loadEv(){return lsG('dfsEv')||[]}
+function saveEv2(d){lsS('dfsEv',d);badges()}
+function navC(dir){calM+=dir;if(calM>11){calM=0;calY++}if(calM<0){calM=11;calY--}renderCal()}
+function getEvDay(iso){return loadEv().filter(function(e){
+  if(e.days&&e.days.length)return e.days.indexOf(iso)>-1;
+  var s=e.start,en=e.end||e.start;return iso>=s&&iso<=en;
+})}
+function renderCal(){
+  document.getElementById('calTitle').textContent=MN[calM]+' '+calY;
+  var g=document.getElementById('calGrid'),ts=td(),html=DN.map(function(d){return'<div class="cdow">'+d+'</div>'}).join('');
+  var fd2=new Date(calY,calM,1).getDay(),dim=new Date(calY,calM+1,0).getDate(),dip=new Date(calY,calM,0).getDate();
+  for(var i=fd2-1;i>=0;i--)html+='<div class="cday otm"><div class="dnum">'+(dip-i)+'</div></div>';
+  for(var d2=1;d2<=dim;d2++){
+    var iso=calY+'-'+String(calM+1).padStart(2,'0')+'-'+String(d2).padStart(2,'0');
+    var evs=getEvDay(iso);
+    html+='<div class="cday'+(iso===ts?' today':'')+'"><div class="dnum" onclick="openEM(\''+iso+'\')">'+d2+'</div>'+
+    evs.slice(0,3).map(function(e){return'<div class="cev '+(EVC[e.type]||'eo')+'" onclick="openEM(null,\''+e.id+'\')" title="'+(e.title||'')+'">'+(e.pes||e.title)+'</div>'}).join('')+
+    (evs.length>3?'<div class="mev">+'+(evs.length-3)+' mais</div>':'')+
+    '</div>';
+  }
+  var tot=fd2+dim,rem=tot%7===0?0:7-(tot%7);
+  for(var d3=1;d3<=rem;d3++)html+='<div class="cday otm"><div class="dnum">'+d3+'</div></div>';
+  g.innerHTML=html;renderSide();
+}
+function renderSide(){
+  var ts=td(),evs=loadEv();
+  var up=evs.filter(function(e){return(e.end||e.start)>=ts}).sort(function(a,b){return a.start.localeCompare(b.start)}).slice(0,8);
+  document.getElementById('nextEv').innerHTML=up.length?up.map(function(e){
+    return'<div class="eitem '+(EVC[e.type]||'eo')+'" onclick="openEM(null,\''+e.id+'\')">'+'<div class="edt">'+fd(e.start)+(e.end&&e.end!==e.start?' > '+fd(e.end):'')+'</div>'+'<div class="eti">'+(e.title||'')+'</div>'+(e.pes?'<div class="ewho">&#128100; '+e.pes+'</div>':'')+
+    '</div>';}).join(''):'<div class="noev">Nenhum evento proximo</div>';
+  var fr=evs.filter(function(e){return e.type==='ferias'&&(e.end||e.start)>=ts}).sort(function(a,b){return a.start.localeCompare(b.start)});
+  document.getElementById('feriasEl').innerHTML=fr.length?fr.map(function(e){
+    return'<div class="eitem ef"><div class="eti">'+(e.pes||e.title)+'</div><div class="edt">'+fd(e.start)+' > '+fd(e.end||e.start)+'</div>'+(e.obs?'<div class="ewho">'+e.obs+'</div>':'')+
+    '</div>';}).join(''):'<div class="noev">Nenhuma ausencia registrada</div>';
+}
+function openEM(dd,eid){
+  var e=eid?loadEv().find(function(x){return x.id===eid}):null;
+  document.getElementById('emTitle').textContent=e?'Editar Evento':'Novo Evento';
+  document.getElementById('eId').value=e?e.id:'';
+  document.getElementById('eTitle').value=e?e.title:'';
+  document.getElementById('eType').value=e?e.type:'outro';
+  document.getElementById('ePes').value=e?e.pes:'';
+  document.getElementById('eObs').value=e?e.obs:'';
+  document.getElementById('eRecur').value=e?e.recur:'none';
+  document.getElementById('eDel').style.display=e?'flex':'none';
+  // modo de data
+  var isDays=e&&e.days&&e.days.length>0;
+  document.getElementById('eModeRange').checked=!isDays;
+  document.getElementById('eModeDays').checked=isDays;
+  _pickerSel=isDays?e.days.slice():(dd?[dd]:[]);
+  _pickerY=new Date().getFullYear();_pickerM=new Date().getMonth();
+  if(dd){var p=dd.split('-');_pickerY=parseInt(p[0]);_pickerM=parseInt(p[1])-1;}
+  document.getElementById('eStart').value=e&&!isDays?e.start:(dd||td());
+  document.getElementById('eEnd').value=e&&!isDays?e.end:(dd||td());
+  toggleDateMode();
+  document.getElementById('ovlE').classList.add('open');
+}
+function closeEM(){document.getElementById('ovlE').classList.remove('open')}
+function delEv(){
+  var id=document.getElementById('eId').value;if(!id||!confirm('Excluir?'))return;
+  saveEv2(loadEv().filter(function(e){return e.id!==id}));closeEM();renderCal();
+}
+function saveEv(){
+  var id=document.getElementById('eId').value,title=document.getElementById('eTitle').value.trim();
+  if(!title){alert('Preencha o titulo.');return}
+  var isDays=document.getElementById('eModeDays').checked;
+  if(isDays&&(!_pickerSel||!_pickerSel.length)){alert('Selecione ao menos um dia.');return}
+  var start=isDays?_pickerSel.slice().sort()[0]:document.getElementById('eStart').value;
+  if(!start){alert('Selecione a data.');return}
+  var evs=loadEv(),e={id:id||uid(),title:title,type:document.getElementById('eType').value,pes:document.getElementById('ePes').value,
+    start:start,end:isDays?_pickerSel.slice().sort().pop():document.getElementById('eEnd').value||start,
+    days:isDays?_pickerSel.slice().sort():[],
+    obs:document.getElementById('eObs').value.trim(),recur:document.getElementById('eRecur').value};
+  if(id)evs=evs.map(function(x){return x.id===id?e:x});else evs.push(e);
+  saveEv2(evs);closeEM();renderCal();
+}
+var _pickerY=new Date().getFullYear(),_pickerM=new Date().getMonth(),_pickerSel=[];
+var MNP=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+var DNP=['D','S','T','Q','Q','S','S'];
+
+function toggleDateMode(){
+  var isDays=document.getElementById('eModeDays').checked;
+  document.getElementById('eModeRangeFields').style.display=isDays?'none':'contents';
+  document.getElementById('eModeDaysFields').style.display=isDays?'block':'none';
+  if(isDays)renderPicker();
+}
+
+function pickerNav(dir){
+  _pickerM+=dir;
+  if(_pickerM>11){_pickerM=0;_pickerY++}
+  if(_pickerM<0){_pickerM=11;_pickerY--}
+  renderPicker();
+}
+
+function renderPicker(){
+  document.getElementById('pickerTitle').textContent=MNP[_pickerM]+' '+_pickerY;
+  var dim=new Date(_pickerY,_pickerM+1,0).getDate();
+  var fd=new Date(_pickerY,_pickerM,1).getDay();
+  var html=DNP.map(function(d){return'<div style="text-align:center;font-size:9px;font-weight:700;color:#9aa0a6;padding:3px 0">'+d+'</div>'}).join('');
+  for(var i=0;i<fd;i++)html+='<div></div>';
+  for(var d=1;d<=dim;d++){
+    var iso=_pickerY+'-'+String(_pickerM+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    var sel=_pickerSel.indexOf(iso)>-1;
+    html+='<div onclick="toggleDay(''+iso+'')" style="text-align:center;font-size:11px;padding:4px 2px;border-radius:4px;cursor:pointer;font-weight:'+(sel?'800':'400')+';background:'+(sel?'#FF9900':'transparent')+';color:'+(sel?'#000':'#e8eaed')+'">'+d+'</div>';
+  }
+  document.getElementById('pickerGrid').innerHTML=html;
+  var sel=_pickerSel.slice().sort();
+  document.getElementById('pickerSelected').textContent=sel.length?sel.length+' dia(s): '+sel.map(function(s){var p=s.split('-');return p[2]+'/'+p[1]}).join(', '):'Nenhum dia selecionado';
+}
+
+function toggleDay(iso){
+  var idx=_pickerSel.indexOf(iso);
+  if(idx>-1)_pickerSel.splice(idx,1);else _pickerSel.push(iso);
+  renderPicker();
+}
+
+function badges(){
+  var t=loadT().filter(function(x){return x.stat!=='done'}).length,bT=document.getElementById('badgeTrat');
+  bT.textContent=t;bT.style.display=t?'':'none';
+  var e=loadEv().filter(function(x){return(x.end||x.start)>=td()}).length,bA=document.getElementById('badgeAg');
+  bA.textContent=e;bA.style.display=e?'':'none';
+}
+(function(){
+  var nodes=['ECB8','EGO8','EIJ8','EJO8','ELO8','EME8','EMR8','EOZ8','ERS8','ESB8','ESE8','EUM8','EVE8','EXS9'];
+  var s=document.getElementById('fNode');
+  nodes.forEach(function(n){var o=document.createElement('option');o.value=n;o.textContent=n;s.appendChild(o)});
+  renderT();renderL();badges();
+  calY=new Date().getFullYear();calM=new Date().getMonth();
+})();</script></body></html>
